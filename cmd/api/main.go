@@ -19,7 +19,7 @@ func main() {
 	log.SetPrefix("Quickstart: ")
 	log.SetFlags(0)
 	router := gin.Default()
-	router.MaxMultipartMemory = 8 << 20
+	router.MaxMultipartMemory = 8 << 20 // 8 MiB
 
 	router.GET("/:name", func(c *gin.Context) {
 		var name string = c.Param("name")
