@@ -15,7 +15,7 @@ type Metadata struct {
 	CourseNames map[string]string
 }
 
-func main() {
+func main() {	
 	log.SetPrefix("Quickstart: ")
 	log.SetFlags(0)
 	router := gin.Default()
