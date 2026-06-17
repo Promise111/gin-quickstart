@@ -5,8 +5,10 @@ import (
 	"maps"
 	"net/http"
 	"path/filepath"
+	"strconv"
 	"strings"
 
+	"github.com/Promise111/gin-quickstart.git/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,7 +30,7 @@ func main() {
 			"status":  true,
 			"message": "User data fetched successfully",
 			"name":    name,
-			"gender": strings.ToUpper(gender),
+			"gender":  strings.ToUpper(gender),
 		})
 	})
 
@@ -97,10 +99,10 @@ func main() {
 	router.PUT("/multiple-upload", func(c *gin.Context) {
 		form, uploadErr := c.MultipartForm()
 		if uploadErr != nil {
-			c.JSON(http.StatusOK,
+			c.JSON(http.StatusBadRequest,
 				gin.H{
 					"status":  false,
-					"message": "Error: Failed to upload files",
+					"message": uploadErr.Error(),
 					"name":    "Promise",
 					"age":     54,
 				})
@@ -109,16 +111,36 @@ func main() {
 		files := form.File["files"]
 		log.Println(files)
 
-		for _, file := range files {
-			dst := filepath.Join("./multiple/", filepath.Base(file.Filename))
-			c.SaveUploadedFile(file, dst)
+		for i, file := range files {
+			extName := filepath.Ext(file.Filename)
+			randomBytes, genBytesErr := utils.GenerateRandomBytes(15)
+			if genBytesErr != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"status": false, "message": genBytesErr.Error(),
+					"name": nil,
+					"age":  nil,
+				})
+				return
+			}
+			newFileName := randomBytes + strconv.Itoa(i) + extName
+			log.Println(extName)
+			dst := filepath.Join("./multiple/", filepath.Base(newFileName))
+			if err := c.SaveUploadedFile(file, dst); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"status":  false,
+					"message": err.Error(),
+					"name":    "Promise",
+					"age":     26,
+				})
+				return
+			}
 		}
 
 		c.JSON(http.StatusCreated, gin.H{
-			"status": true, 
-			"message": "Files uploaded successfully",
-			"name": "Promise",
-			"age": 22,
+			"status":     true,
+			"message":    "Files uploaded successfully",
+			"name":       "Promise",
+			"age":        22,
+			"fileLenght": len(files),
 		})
 	})
 
