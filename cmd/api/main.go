@@ -15,7 +15,7 @@ type Metadata struct {
 	CourseNames map[string]string
 }
 
-func main() {	
+func main() {
 	log.SetPrefix("Quickstart: ")
 	log.SetFlags(0)
 	router := gin.Default()
@@ -23,10 +23,12 @@ func main() {
 
 	router.GET("/:name", func(c *gin.Context) {
 		var name string = c.Param("name")
+		gender := c.Query("gender")
 		c.JSON(http.StatusOK, gin.H{
 			"status":  true,
 			"message": "User data fetched successfully",
 			"name":    name,
+			"gender": strings.ToUpper(gender),
 		})
 	})
 
@@ -89,6 +91,33 @@ func main() {
 			"age":      30,
 			"fileName": file.Filename,
 			"path":     dst,
+		})
+	})
+
+	router.PUT("/multiple-upload", func(c *gin.Context) {
+		form, uploadErr := c.MultipartForm()
+		if uploadErr != nil {
+			c.JSON(http.StatusOK,
+				gin.H{
+					"status":  false,
+					"message": "Error: Failed to upload files",
+					"name":    "Promise",
+					"age":     54,
+				})
+			return
+		}
+		files := form.File["files"]
+
+		for _, file := range files {
+			dst := filepath.Join("./multiple/", filepath.Base(file.Filename))
+			c.SaveUploadedFile(file, dst)
+		}
+
+		c.JSON(http.StatusCreated, gin.H{
+			"status": true, 
+			"message": "Files uploaded successfully",
+			"name": "Promise",
+			"age": 22,
 		})
 	})
 
