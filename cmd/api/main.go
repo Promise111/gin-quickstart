@@ -107,6 +107,7 @@ func main() {
 			return
 		}
 		files := form.File["files"]
+		log.Println(files)
 
 		for _, file := range files {
 			dst := filepath.Join("./multiple/", filepath.Base(file.Filename))
