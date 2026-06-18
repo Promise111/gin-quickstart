@@ -70,7 +70,6 @@ func MultipleUpload(c *gin.Context) {
 			return
 		}
 		newFileName := randomBytes + strconv.Itoa(i) + extName
-		log.Println(extName)
 		dst := filepath.Join("./multiple/", filepath.Base(newFileName))
 		if err := c.SaveUploadedFile(file, dst); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
