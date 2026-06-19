@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"path/filepath"
@@ -45,6 +46,29 @@ func Upload(c *gin.Context) {
 }
 
 func MultipleUpload(c *gin.Context) {
+	const (
+		MaxUploadSize = 8 << 20 // 1 MB
+	)
+
+	// Wrap body reader so only MaxUploadSize bytes are allowed
+	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, MaxUploadSize)
+
+	// Parse multipart form
+	if err := c.Request.ParseMultipartForm(MaxUploadSize); err != nil {
+		if _, ok := err.(*http.MaxBytesError); ok {
+			c.JSON(http.StatusRequestEntityTooLarge, gin.H{
+				"status":  false,
+				"message": fmt.Sprintf("file too large (max: %d bytes)", MaxUploadSize),
+			})
+			return
+		}
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+
 	form, uploadErr := c.MultipartForm()
 	if uploadErr != nil {
 		c.JSON(http.StatusBadRequest,
