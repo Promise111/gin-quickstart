@@ -10,6 +10,7 @@ A personal sandbox for learning [Gin](https://github.com/gin-gonic/gin) and Go H
 - Request body size limits with `http.MaxBytesReader`
 - Multipart parsing and `MaxMultipartMemory`
 - Randomized filenames for uploaded files
+- API versioning with Gin route groups (`/api/v1/...`)
 
 ## Project structure
 
@@ -18,7 +19,7 @@ cmd/api/          Entry point — starts the server
 internal/
   router/         Route registration and Gin engine setup
   handler/        HTTP handlers (request in, JSON out)
-  utils/          Shared helpers and constants
+  utils/          Shared helpers and constants (paths, upload limits)
 files/            Single uploads (gitignored)
 multiple/         Multi-file uploads (gitignored)
 ```
@@ -35,14 +36,26 @@ go run ./cmd/api/
 
 The server starts on `http://localhost:8080` by default.
 
+## API routing
+
+All endpoints live under a versioned prefix:
+
+```
+/api/v1/...
+```
+
+Path prefixes are defined in `internal/utils/const.go` (`APIPrefix`, `V1Prefix`) and mounted in `internal/router/router.go` using Gin route groups. When a v2 is needed later, add `registerV2(api.Group("/v2"))` without changing existing v1 handlers.
+
 ## API endpoints
+
+Base URL: `http://localhost:8080/api/v1`
 
 ### `GET /:name`
 
 Fetch dummy user data by path param.
 
 ```bash
-curl "http://localhost:8080/Promise?gender=m"
+curl "http://localhost:8080/api/v1/Promise?gender=m"
 ```
 
 ### `POST /user`
@@ -50,7 +63,7 @@ curl "http://localhost:8080/Promise?gender=m"
 Create a user from form data. Supports query params, post form fields, and nested map keys.
 
 ```bash
-curl -X POST "http://localhost:8080/user?gender=m&ids[course1]=101&ids[course2]=102" \
+curl -X POST "http://localhost:8080/api/v1/user?gender=m&ids[course1]=101&ids[course2]=102" \
   -d "name=Promise" \
   -d "age=30" \
   -d "names[course1]=Go Basics" \
@@ -62,7 +75,7 @@ curl -X POST "http://localhost:8080/user?gender=m&ids[course1]=101&ids[course2]=
 Upload a single file (`profilePic`). Max request body: **1 MB**.
 
 ```bash
-curl -X PUT "http://localhost:8080/upload" \
+curl -X PUT "http://localhost:8080/api/v1/upload" \
   -F "profilePic=@/path/to/image.jpg"
 ```
 
@@ -73,7 +86,7 @@ Saved to `./files/` with a randomized filename.
 Upload multiple files (`files`). Max request body: **4 MB**.
 
 ```bash
-curl -X PUT "http://localhost:8080/multiple-upload" \
+curl -X PUT "http://localhost:8080/api/v1/multiple-upload" \
   -F "files=@/path/to/image1.jpg" \
   -F "files=@/path/to/image2.png"
 ```
@@ -84,8 +97,8 @@ Saved to `./multiple/` with randomized filenames.
 
 | Setting | Value | Purpose |
 |---------|-------|---------|
-| `utils.MaxUploadSizeSingle` | 1 MB | Max body size for `/upload` |
-| `utils.MaxUploadSizeMultiple` | 4 MB | Max body size for `/multiple-upload` |
+| `utils.MaxUploadSizeSingle` | 1 MB | Max body size for `/api/v1/upload` |
+| `utils.MaxUploadSizeMultiple` | 4 MB | Max body size for `/api/v1/multiple-upload` |
 | `router.MaxMultipartMemory` | 8 MB | How much multipart file data stays in RAM before spilling to disk |
 
 `http.MaxBytesReader` limits the **entire request body** (files + form fields). It is not a per-file-only limit.
