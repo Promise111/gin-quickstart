@@ -12,23 +12,21 @@ import (
 )
 
 func Upload(c *gin.Context) {
-	const (
-		MaxUploadSize = 2 << 20 // 2MB
-	)
-
 	// Wrap request reader to allow only MaxUploadSize bytes
-	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, MaxUploadSize)
+	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, utils.MaxUploadSizeSingle)
 
-	// parse MutipartForm
-	if err := c.Request.ParseMultipartForm(MaxUploadSize); err != nil {
+	if err := c.Request.ParseMultipartForm(utils.MaxUploadSizeSingle); err != nil {
 		if _, ok := err.(*http.MaxBytesError); ok {
 			c.JSON(http.StatusRequestEntityTooLarge, gin.H{
 				"status":  false,
-				"message": fmt.Sprintf("file too large, (max: %d bytes)", MaxUploadSize),
+				"message": fmt.Sprintf("File entity too large, (max: %d)", utils.MaxUploadSizeSingle),
 			})
 			return
 		}
-		c.JSON(http.StatusBadRequest, gin.H{"status": false, "message": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
 		return
 	}
 
@@ -42,7 +40,16 @@ func Upload(c *gin.Context) {
 		})
 		return
 	}
-	dst := filepath.Join("./files/", filepath.Base(file.Filename))
+	fileName, err := utils.GenerateRandomBytes(20)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  false,
+			"message": err.Error(),
+		})
+		return
+	}
+	fileName = fileName + filepath.Ext(file.Filename)
+	dst := filepath.Join("./files/", filepath.Base(fileName))
 	saveErr := c.SaveUploadedFile(file, dst)
 	if saveErr != nil {
 		c.JSON(http.StatusCreated, gin.H{
@@ -66,19 +73,15 @@ func Upload(c *gin.Context) {
 }
 
 func MultipleUpload(c *gin.Context) {
-	const (
-		MaxUploadSize = 8 << 20 // 1 MB
-	)
+	// Wrap request reader to only allow MaxUploadSize bytes
+	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, utils.MaxUploadSizeMultiple)
 
-	// Wrap body reader so only MaxUploadSize bytes are allowed
-	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, MaxUploadSize)
-
-	// Parse multipart form
-	if err := c.Request.ParseMultipartForm(MaxUploadSize); err != nil {
+	// parse multipart form
+	if err := c.Request.ParseMultipartForm(utils.MaxUploadSizeMultiple); err != nil {
 		if _, ok := err.(*http.MaxBytesError); ok {
 			c.JSON(http.StatusRequestEntityTooLarge, gin.H{
 				"status":  false,
-				"message": fmt.Sprintf("file too large (max: %d bytes)", MaxUploadSize),
+				"message": fmt.Sprintf("File entity too large (max: %d)", utils.MaxUploadSizeMultiple),
 			})
 			return
 		}
