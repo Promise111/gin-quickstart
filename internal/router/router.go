@@ -14,6 +14,8 @@ func New() *gin.Engine {
 
 	{
 		v1 := api.Group(utils.V1Prefix)
+		v1.GET("/final", handler.FinalHandler)
+		v1.GET("/test", handler.TestHandler(r))
 		v1.GET("/:name", handler.GetByName)
 		v1.POST("/user", handler.CreateUser)
 		v1.PUT("/upload", handler.Upload)
