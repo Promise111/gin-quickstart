@@ -20,6 +20,7 @@ func New() *gin.Engine {
 		v1.POST("/user", handler.CreateUser)
 		v1.PUT("/upload", handler.Upload)
 		v1.PUT("/multiple-upload", handler.MultipleUpload)
+		v1.POST("/login", handler.LoginHandler(r))
 	}
 
 	return r
