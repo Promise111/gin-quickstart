@@ -15,6 +15,7 @@ import (
 type Person struct {
 	Name    string `form:"name"`
 	Address string `form:"address"`
+	Birthday time.Time `form:"birth_day" binding:"required" time_format:"2006-01-02" time_utc:"1" time_location:"Africa/Lagos"`
 }
 
 type Metadata struct {
@@ -97,7 +98,7 @@ func GetBookableDate(engine *gin.Engine) gin.HandlerFunc {
 func GetStartPage(engine *gin.Engine) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var person Person
-		if bindErr := c.ShouldBindQuery(&person); bindErr != nil {
+		if bindErr := c.ShouldBind(&person); bindErr != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"status":  false,
 				"message": bindErr.Error(),
@@ -110,6 +111,7 @@ func GetStartPage(engine *gin.Engine) gin.HandlerFunc {
 			"message": "Record fetched",
 			"name":    person.Name,
 			"address": person.Address,
+			"birthday": person.Birthday,
 		})
 	}
 }

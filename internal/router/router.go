@@ -27,7 +27,8 @@ func New() *gin.Engine {
 		v1.PUT("/multiple-upload", handler.MultipleUpload)
 		v1.POST("/login", handler.LoginHandler(r))
 		v1.GET("/booking", handler.GetBookableDate(r))
-		v1.Any("/testing", handler.GetStartPage(r))
+		v1.GET("/testing", handler.GetStartPage(r))
+		v1.POST("/testing", handler.GetStartPage(r))
 	}
 
 	return r
