@@ -13,9 +13,17 @@ import (
 )
 
 type Person struct {
-	Name    string `form:"name"`
-	Address string `form:"address"`
-	Birthday time.Time `form:"birth_day" binding:"required" time_format:"2006-01-02" time_utc:"1" time_location:"Africa/Lagos"`
+	Name     string    `form:"name" json:"name"`
+	Address  string    `form:"address" json:"address"`
+	Birthday time.Time `form:"birthday" json:"birthday" binding:"required" time_format:"2006-01-02" time_utc:"1" time_location:"Africa/Lagos"`
+}
+
+type Person2 struct {
+	Name      string    `form:"name,default=Benedict"`
+	Age       int       `form:"age,default=10"`
+	Friends   []string  `form:"friends,default=Mishael;Daniel"`
+	Addresses [2]string `form:"addresses,default=Lagos Owerri" collection_format:"ssv"`
+	LapTimes  []int     `form:"lap_times,default=1;2;3" collection_format:"csv"`
 }
 
 type Metadata struct {
@@ -107,11 +115,25 @@ func GetStartPage(engine *gin.Engine) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"status":  true,
-			"message": "Record fetched",
-			"name":    person.Name,
-			"address": person.Address,
+			"status":   true,
+			"message":  "Record fetched",
+			"name":     person.Name,
+			"address":  person.Address,
 			"birthday": person.Birthday,
 		})
+	}
+}
+
+func GetPerson(engine *gin.Engine) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var person Person2
+		if bindErr := c.ShouldBind(&person); bindErr != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": bindErr.Error(),
+			})
+			return
+		}
+		c.JSON(http.StatusOK, person)
 	}
 }
