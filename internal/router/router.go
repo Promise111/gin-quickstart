@@ -30,6 +30,8 @@ func New() *gin.Engine {
 		v1.GET("/testing", handler.GetStartPage(r))
 		v1.POST("/testing", handler.GetStartPage(r))
 		v1.POST("/person", handler.GetPerson(r))
+		v1.GET("/search", handler.Search(r))
+		v1.GET("/:name/:id", handler.BindURI(r))
 	}
 
 	return r

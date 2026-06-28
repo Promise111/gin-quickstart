@@ -26,6 +26,14 @@ type Person2 struct {
 	LapTimes  []int     `form:"lap_times,default=1;2;3" collection_format:"csv"`
 }
 
+type Filters struct {
+	Tags   []string `form:"tags,default=go;web;api" collection_format:"csv"`         // /search?tags=go,web,api
+	Labels []string `form:"labels,default=bug,helpwanted" collection_format:"multi"` // /search?labels=bug&labels=helpwanted
+	IdsSSV []int    `form:"ids_ssv" collection_format:"ssv"`                         // /search?ids_ssv=1 2 3
+	IdsTSV []int    `form:"ids_tsv" collection_format:"tsv"`                         // /search?ids_tsv=1\t2\t3
+	Levels []int    `form:"levels" collection_format:"pipes"`                        // /search?levels=1|2|3
+}
+
 type Metadata struct {
 	Ids         map[string]string
 	CourseNames map[string]string
@@ -34,6 +42,11 @@ type Metadata struct {
 type Booking struct {
 	CheckIn  time.Time `form:"check_in" binding:"required,bookabledate" time_format:"2006-01-02"`
 	CheckOut time.Time `form:"check_out" binding:"required,bookabledate,gtfield=CheckIn" time_format:"2006-01-02"`
+}
+
+type URL struct {
+	ID   string `uri:"id" binding:"required,uuid"`
+	Name string `uri:"name" binding:"required"`
 }
 
 var BookableDate validator.Func = func(fl validator.FieldLevel) bool {
@@ -135,5 +148,35 @@ func GetPerson(engine *gin.Engine) gin.HandlerFunc {
 			return
 		}
 		c.JSON(http.StatusOK, person)
+	}
+}
+
+func Search(engine *gin.Engine) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var f Filters
+		if err := c.ShouldBind(&f); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, f)
+	}
+}
+
+func BindURI(engine *gin.Engine) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var url URL
+		if bindErr := c.ShouldBindUri(&url); bindErr != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": bindErr.Error(),
+			})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"status": true,
+			"message": "Record fetched successfully",
+			"name": url.Name,
+			"uuid": url.ID,
+		})
 	}
 }
