@@ -32,6 +32,8 @@ func New() *gin.Engine {
 		v1.POST("/person", handler.GetPerson(r))
 		v1.GET("/search", handler.Search(r))
 		v1.GET("/:name/:id", handler.BindURI(r))
+		v1.GET("/testText", handler.TextUmarshal(r))
+		v1.GET("/testBind", handler.UnmarshalParam(r))
 	}
 
 	return r
