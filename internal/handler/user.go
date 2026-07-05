@@ -204,7 +204,7 @@ func GetHeaders(engine *gin.Engine) gin.HandlerFunc {
 
 func GetCheckBoxes(engine *gin.Engine) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.HTML(http.StatusOK, "form.html", nil)
+		c.HTML(http.StatusOK, "form.html", gin.H{"Name": "Promise"})
 	}
 }
 
