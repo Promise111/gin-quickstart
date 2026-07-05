@@ -173,10 +173,56 @@ func BindURI(engine *gin.Engine) gin.HandlerFunc {
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{
-			"status": true,
+			"status":  true,
 			"message": "Record fetched successfully",
-			"name": url.Name,
-			"uuid": url.ID,
+			"name":    url.Name,
+			"uuid":    url.ID,
+		})
+	}
+}
+
+func GetHeaders(engine *gin.Engine) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var testHeader struct {
+			Rate   int    `header:"Rate"`
+			Domain string `header:"Domain"`
+		}
+		if bindErr := c.ShouldBindHeader(&testHeader); bindErr != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": bindErr.Error(),
+			})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"status":  true,
+			"message": testHeader,
+		})
+	}
+}
+
+func GetCheckBoxes(engine *gin.Engine) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.HTML(http.StatusOK, "form.html", nil)
+	}
+}
+
+func PostCheckBoxes(engine *gin.Engine) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var myColors struct {
+			Colors []string `form:"colors[]" binding:"required"`
+		}
+		if bindErr := c.ShouldBind(&myColors); bindErr != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": bindErr.Error(),
+			})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"status":  true,
+			"message": myColors,
 		})
 	}
 }

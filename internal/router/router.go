@@ -15,6 +15,7 @@ func New() *gin.Engine {
 	}
 	r.MaxMultipartMemory = 8 << 20 // 8 MiB
 
+	r.LoadHTMLGlob("internal/templates/*")
 	api := r.Group(utils.APIPrefix)
 
 	{
@@ -34,6 +35,9 @@ func New() *gin.Engine {
 		v1.GET("/:name/:id", handler.BindURI(r))
 		v1.GET("/testText", handler.TextUmarshal(r))
 		v1.GET("/testBind", handler.UnmarshalParam(r))
+		v1.GET("/header", handler.GetHeaders(r))
+		v1.GET("/checkboxes", handler.GetCheckBoxes(r))
+		v1.POST("/checkboxes", handler.PostCheckBoxes(r))
 	}
 
 	return r
