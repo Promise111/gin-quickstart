@@ -100,7 +100,7 @@ func BindMultipleStruct(engine *gin.Engine) gin.HandlerFunc {
 		if errB := c.ShouldBindWith(&formB, binding.JSON); errB == nil {
 			c.JSON(http.StatusOK, gin.H{
 				"status":true,
-				"message": "matched formA", 
+				"message": "matched formB", 
 				"foo": formB.Bar,
 			})
 			return
