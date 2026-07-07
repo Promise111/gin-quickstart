@@ -46,6 +46,7 @@ func New() *gin.Engine {
 		v2.GET("/getb", handler.GetB(r))
 		v2.GET("/getc", handler.GetC(r))
 		v2.GET("/getd", handler.GetD(r))
+		v2.POST("/bind", handler.BindMultipleStruct(r))
 	}
 
 	return r

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 type StructA struct {
@@ -76,6 +77,37 @@ func GetD(engine *gin.Engine) gin.HandlerFunc {
 		c.JSON(http.StatusOK, gin.H{
 			"a": d.NestedAnonyStruct,
 			"b": d.FieldD,
+		})
+	}
+}
+
+func BindMultipleStruct(engine *gin.Engine) gin.HandlerFunc {
+	var formA struct {
+		Foo string `form:"foo" json:"foo" binding:"required" xml:"foo"`
+	}
+	var formB struct {
+		Bar string `form:"bar" json:"bar" binding:"required" xml:"bar"`
+	}
+	return func (c *gin.Context) {
+		if errA := c.ShouldBindWith(&formA, binding.JSON); errA == nil {
+			c.JSON(http.StatusOK, gin.H{
+				"status":true,
+				"message": "matched formA", 
+				"foo": formA.Foo,
+			})
+			return
+		}
+		if errB := c.ShouldBindWith(&formB, binding.JSON); errB == nil {
+			c.JSON(http.StatusOK, gin.H{
+				"status":true,
+				"message": "matched formA", 
+				"foo": formB.Bar,
+			})
+			return
+		}
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status": false,
+			"message": "request body did not match any known format",
 		})
 	}
 }
