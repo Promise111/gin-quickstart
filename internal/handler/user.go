@@ -226,3 +226,33 @@ func PostCheckBoxes(engine *gin.Engine) gin.HandlerFunc {
 		})
 	}
 }
+
+func LoginUrlEncoded(engin *gin.Engine) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var request struct {
+			Email    string `form:"email" binding:"required,email"`
+			Password string `form:"password" binding:"required"`
+		}
+
+		if bindErr := c.ShouldBind(&request); bindErr != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"status":  false,
+				"message": bindErr.Error(),
+			})
+			return
+		}
+
+		if request.Email != "promiseihunna@gmail.com" || request.Password != "p@ssW*rd" {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"status":  false,
+				"message": "Incorrect email and email",
+			})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"status":  true,
+			"message": "You are logged in",
+		})
+	}
+}
