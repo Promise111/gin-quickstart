@@ -38,7 +38,14 @@ func New() *gin.Engine {
 		v1.GET("/header", handler.GetHeaders(r))
 		v1.GET("/checkboxes", handler.GetCheckBoxes(r))
 		v1.POST("/checkboxes", handler.PostCheckBoxes(r))
-		v1.POST("/login-urlencoded",handler.LoginUrlEncoded(r))
+		v1.POST("/login-urlencoded", handler.LoginUrlEncoded(r))
+	}
+
+	{
+		v2 := api.Group(utils.V2Prefix)
+		v2.GET("/getb", handler.GetB(r))
+		v2.GET("/getc", handler.GetC(r))
+		v2.GET("/getd", handler.GetD(r))
 	}
 
 	return r
