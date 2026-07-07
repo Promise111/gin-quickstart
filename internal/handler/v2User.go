@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -89,7 +90,8 @@ func BindMultipleStruct(engine *gin.Engine) gin.HandlerFunc {
 		Bar string `form:"bar" json:"bar" binding:"required" xml:"bar"`
 	}
 	return func (c *gin.Context) {
-		if errA := c.ShouldBindWith(&formA, binding.JSON); errA == nil {
+		if errA := c.ShouldBindBodyWith(&formA, binding.JSON); errA == nil {
+			log.Println("got here")
 			c.JSON(http.StatusOK, gin.H{
 				"status":true,
 				"message": "matched formA", 
@@ -97,11 +99,11 @@ func BindMultipleStruct(engine *gin.Engine) gin.HandlerFunc {
 			})
 			return
 		}
-		if errB := c.ShouldBindWith(&formB, binding.JSON); errB == nil {
+		if errB := c.ShouldBindBodyWith(&formB, binding.JSON); errB == nil {
 			c.JSON(http.StatusOK, gin.H{
 				"status":true,
 				"message": "matched formB", 
-				"foo": formB.Bar,
+				"bar": formB.Bar,
 			})
 			return
 		}
