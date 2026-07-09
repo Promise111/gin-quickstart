@@ -34,6 +34,7 @@ func (customerBinding) Bind(req *http.Request, obj any) error {
 	if err := binding.MapFormWithTag(obj, req.Form, customerTag); err != nil {
 		return err
 	}
+	log.Println(req.Form)
 	return validate(obj)
 }
 
