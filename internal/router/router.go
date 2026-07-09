@@ -15,7 +15,8 @@ func New() *gin.Engine {
 	}
 	r.MaxMultipartMemory = 8 << 20 // 8 MiB
 
-	r.Static("/assets", "./assets")
+	// r.Static("/assets", "./assets")
+	r.StaticFS("/assets", gin.Dir("./assets", true))
 
 	r.LoadHTMLGlob("internal/templates/*")
 	api := r.Group(utils.APIPrefix)
@@ -50,6 +51,8 @@ func New() *gin.Engine {
 		v2.GET("/getd", handler.GetD(r))
 		v2.POST("/bind", handler.BindMultipleStruct(r))
 		v2.GET("/list", handler.ListCustomerBindind(r))
+		v2.GET("/walking-god", handler.GetDocs(r))
+		v2.GET("/download-doc", handler.GetDocsDownload(r))
 	}
 
 	return r
