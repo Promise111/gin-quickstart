@@ -15,6 +15,8 @@ func New() *gin.Engine {
 	}
 	r.MaxMultipartMemory = 8 << 20 // 8 MiB
 
+	r.Static("/assets", "./assets")
+
 	r.LoadHTMLGlob("internal/templates/*")
 	api := r.Group(utils.APIPrefix)
 
