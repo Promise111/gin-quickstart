@@ -28,6 +28,7 @@ func SomeDataFromReader(engine *gin.Engine) gin.HandlerFunc {
 			c.Status(http.StatusServiceUnavailable)
 			return
 		}
+		defer response.Body.Close()
 
 		reader := response.Body
 		contentLength := response.ContentLength
