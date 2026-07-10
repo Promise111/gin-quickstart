@@ -53,6 +53,7 @@ func New() *gin.Engine {
 		v2.GET("/list", handler.ListCustomerBindind(r))
 		v2.GET("/walking-god", handler.GetDocs(r))
 		v2.GET("/download-doc", handler.GetDocsDownload(r))
+		v2.GET("/someDataFromReader", handler.SomeDataFromReader(r))
 	}
 
 	return r
