@@ -41,3 +41,9 @@ func SomeDataFromReader(engine *gin.Engine) gin.HandlerFunc {
 		c.DataFromReader(http.StatusOK, contentLength, contentType, reader, extraHeaders)
 	}
 }
+
+func GetHTML1(engine *gin.Engine) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.HTML(http.StatusOK, "fileOne.html", gin.H{"title": "Gin Quick-Start"})
+	}
+}

@@ -54,6 +54,7 @@ func New() *gin.Engine {
 		v2.GET("/walking-god", handler.GetDocs(r))
 		v2.GET("/download-doc", handler.GetDocsDownload(r))
 		v2.GET("/someDataFromReader", handler.SomeDataFromReader(r))
+		v2.GET("/html", handler.GetHTML1(r))
 	}
 
 	return r
