@@ -2,6 +2,7 @@ package handler
 
 import (
 	// "embed"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -45,5 +46,14 @@ func SomeDataFromReader(engine *gin.Engine) gin.HandlerFunc {
 func GetHTML1(engine *gin.Engine) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.HTML(http.StatusOK, "fileOne.html", gin.H{"title": "Gin Quick-Start"})
+	}
+}
+
+func TestV2(engine *gin.Engine) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		example := c.MustGet("example").(string)
+
+		// It waould print "12345"
+		log.Println(example)
 	}
 }

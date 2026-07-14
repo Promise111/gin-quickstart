@@ -1,6 +1,8 @@
 package router
 
 import (
+	"github.com/Promise111/gin-quickstart.git/internal/middleware"
+
 	"github.com/Promise111/gin-quickstart.git/internal/handler"
 	"github.com/Promise111/gin-quickstart.git/internal/utils"
 	"github.com/gin-gonic/gin"
@@ -10,6 +12,9 @@ import (
 
 func New() *gin.Engine {
 	r := gin.Default()
+	// register custom Logger middleware
+	r.Use(middleware.Logger())
+
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("bookabledate", handler.BookableDate)
 	}
@@ -55,6 +60,7 @@ func New() *gin.Engine {
 		v2.GET("/download-doc", handler.GetDocsDownload(r))
 		v2.GET("/someDataFromReader", handler.SomeDataFromReader(r))
 		v2.GET("/html", handler.GetHTML1(r))
+		v2.GET("/test", handler.TestV2(r))
 	}
 
 	return r
