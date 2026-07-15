@@ -12,18 +12,18 @@ func Logger() gin.HandlerFunc {
 		t := time.Now()
 
 		// Set example variable
-		c.Set("example", "12345")
+		c.Set("example","12345")
 
 		// before request
 
 		c.Next()
 
-		//after request
+		// after request
 		latency := time.Since(t)
-		log.Println(latency)
+		log.Print(latency)
 
 		// access the status we are sending
 		status := c.Writer.Status()
-		log.Println(status)
+		log.Print(status)
 	}
 }

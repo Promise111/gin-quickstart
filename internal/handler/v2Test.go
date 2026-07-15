@@ -50,10 +50,10 @@ func GetHTML1(engine *gin.Engine) gin.HandlerFunc {
 }
 
 func TestV2(engine *gin.Engine) gin.HandlerFunc {
-	return func(c *gin.Context) {
+	return func (c *gin.Context) {
 		example := c.MustGet("example").(string)
 
-		// It waould print "12345"
+		// it would print: "12345"
 		log.Println(example)
 	}
 }

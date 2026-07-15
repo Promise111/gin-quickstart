@@ -2,7 +2,6 @@ package router
 
 import (
 	"github.com/Promise111/gin-quickstart.git/internal/middleware"
-
 	"github.com/Promise111/gin-quickstart.git/internal/handler"
 	"github.com/Promise111/gin-quickstart.git/internal/utils"
 	"github.com/gin-gonic/gin"
@@ -11,7 +10,8 @@ import (
 )
 
 func New() *gin.Engine {
-	r := gin.Default()
+	// r := gin.Default()
+	r := gin.New()
 	// register custom Logger middleware
 	r.Use(middleware.Logger())
 
