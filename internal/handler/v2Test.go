@@ -50,10 +50,17 @@ func GetHTML1(engine *gin.Engine) gin.HandlerFunc {
 }
 
 func TestV2(engine *gin.Engine) gin.HandlerFunc {
-	return func (c *gin.Context) {
+	return func(c *gin.Context) {
 		example := c.MustGet("example").(string)
 
 		// it would print: "12345"
 		log.Println(example)
+	}
+}
+
+func Panic(engine *gin.Engine) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// panic with a string -- the custom middleware could save this to a database or report it to the user
+		panic("foo")
 	}
 }

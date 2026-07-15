@@ -15,6 +15,9 @@ func New() *gin.Engine {
 	// register custom Logger middleware
 	r.Use(middleware.Logger())
 
+	// Recovery middleware recovers from any panics and returns 500 if there was one
+	r.Use(middleware.Recovery())
+
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("bookabledate", handler.BookableDate)
 	}
@@ -61,6 +64,7 @@ func New() *gin.Engine {
 		v2.GET("/someDataFromReader", handler.SomeDataFromReader(r))
 		v2.GET("/html", handler.GetHTML1(r))
 		v2.GET("/test", handler.TestV2(r))
+		v2.GET("/panic",handler.Panic(r))
 	}
 
 	return r
