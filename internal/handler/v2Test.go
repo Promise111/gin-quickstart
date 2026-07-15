@@ -2,6 +2,7 @@ package handler
 
 import (
 	// "embed"
+	"errors"
 	"log"
 	"net/http"
 
@@ -62,5 +63,12 @@ func Panic(engine *gin.Engine) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// panic with a string -- the custom middleware could save this to a database or report it to the user
 		panic("foo")
+	}
+}
+
+func HandleError (engine *gin.Engine) gin.HandlerFunc {
+	return func (c *gin.Context) {
+		log.Println("An error occurred!")
+		c.Error(errors.New("An error occurred!"))
 	}
 }
