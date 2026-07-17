@@ -1,8 +1,8 @@
 package router
 
 import (
-	"github.com/Promise111/gin-quickstart.git/internal/middleware"
 	"github.com/Promise111/gin-quickstart.git/internal/handler"
+	"github.com/Promise111/gin-quickstart.git/internal/middleware"
 	"github.com/Promise111/gin-quickstart.git/internal/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -67,8 +67,15 @@ func New() *gin.Engine {
 		v2.GET("/someDataFromReader", handler.SomeDataFromReader(r))
 		v2.GET("/html", handler.GetHTML1(r))
 		v2.GET("/test", handler.TestV2(r))
-		v2.GET("/panic",handler.Panic(r))
+		v2.GET("/panic", handler.Panic(r))
 		v2.GET("/error", handler.HandleError(r))
+	}
+
+	{
+		authorized := r.Group("/admin", middleware.BasicAuth)
+		// /admin/secrets endpoint
+		// hit "localhost:8080/admin/secrets
+		authorized.GET("/secrets", handler.HandleSecrets(r))
 	}
 
 	return r
