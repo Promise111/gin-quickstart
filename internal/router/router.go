@@ -8,6 +8,9 @@ import (
 	"github.com/Promise111/gin-quickstart.git/internal/utils"
 	"github.com/danielkov/gin-helmet/ginhelmet"
 	"github.com/gin-contrib/cors"
+	// "github.com/gin-contrib/csrf"
+	// "github.com/gin-contrib/sessions"
+	// "github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -27,6 +30,17 @@ func New() *gin.Engine {
 		MaxAge:           12 * time.Hour,
 	}))
 	r.Use(ginhelmet.Default())
+
+	// store := cookie.NewStore([]byte("session-secret"))
+	// r.Use(sessions.Sessions("mysession", store))
+
+	// r.Use(csrf.Middleware(csrf.Options{
+	// 	Secret: "csrf-token-secret",
+	// 	ErrorFunc: func(c *gin.Context) {
+	// 		c.String(403, "CSRF token mismatch")
+	// 		c.Abort()
+	// 	},
+	// }))
 
 	// Recovery middleware recovers from any panics and returns 500 if there was one
 	r.Use(middleware.Recovery())
