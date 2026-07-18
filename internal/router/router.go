@@ -1,10 +1,13 @@
 package router
 
 import (
+	"time"
+
 	"github.com/Promise111/gin-quickstart.git/internal/handler"
 	"github.com/Promise111/gin-quickstart.git/internal/middleware"
 	"github.com/Promise111/gin-quickstart.git/internal/utils"
 	"github.com/danielkov/gin-helmet/ginhelmet"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -15,6 +18,14 @@ func New() *gin.Engine {
 	r := gin.New()
 	// register custom Logger middleware
 	r.Use(middleware.Logger())
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 	r.Use(ginhelmet.Default())
 
 	// Recovery middleware recovers from any panics and returns 500 if there was one
