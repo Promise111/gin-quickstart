@@ -4,6 +4,7 @@ import (
 	"github.com/Promise111/gin-quickstart.git/internal/handler"
 	"github.com/Promise111/gin-quickstart.git/internal/middleware"
 	"github.com/Promise111/gin-quickstart.git/internal/utils"
+	"github.com/danielkov/gin-helmet/ginhelmet"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -14,6 +15,7 @@ func New() *gin.Engine {
 	r := gin.New()
 	// register custom Logger middleware
 	r.Use(middleware.Logger())
+	r.Use(ginhelmet.Default())
 
 	// Recovery middleware recovers from any panics and returns 500 if there was one
 	r.Use(middleware.Recovery())
@@ -79,9 +81,11 @@ func New() *gin.Engine {
 	}
 
 	{
-		v3 := api.Group("v3")
+		v3 := api.Group(utils.V3Prefix)
 		v3.GET("/long_async", handler.LongAsync(r))
 		v3.GET("/long_sync", handler.LongSync(r))
+		// v3.GET("/ping", middleware.SecurityHeaders(r), handler.V3Ping(r))
+		v3.GET("/ping", handler.V3Ping(r))
 	}
 
 	return r

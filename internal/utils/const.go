@@ -6,4 +6,6 @@ const (
 	APIPrefix = "/api"
 	V1Prefix = "/v1"
 	V2Prefix = "v2"
+	V3Prefix = "v3"
+	ExpectedHost = "localhost:8080"
 )
