@@ -75,7 +75,13 @@ func New() *gin.Engine {
 		authorized := r.Group("/admin", middleware.BasicAuth)
 		// /admin/secrets endpoint
 		// hit "localhost:8080/admin/secrets
-		authorized.GET("/secrets", handler.HandleSecrets(r))
+		authorized.GET("/secrets", middleware.DumDumMiddleware(), handler.HandleSecrets(r))
+	}
+
+	{
+		v3 := api.Group("v3")
+		v3.GET("/long_async", handler.LongAsync(r))
+		v3.GET("/long_sync", handler.LongSync(r))
 	}
 
 	return r
