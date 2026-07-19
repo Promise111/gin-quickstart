@@ -110,7 +110,7 @@ func New() *gin.Engine {
 		v3.GET("/long_async", handler.LongAsync(r))
 		v3.GET("/long_sync", handler.LongSync(r))
 		// v3.GET("/ping", middleware.SecurityHeaders(r), handler.V3Ping(r))
-		v3.GET("/ping", handler.V3Ping(r))
+		v3.GET("/ping",middleware.RateLimiter(), handler.V3Ping(r))
 	}
 
 	return r
