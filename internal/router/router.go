@@ -8,6 +8,7 @@ import (
 	"github.com/Promise111/gin-quickstart.git/internal/utils"
 	"github.com/danielkov/gin-helmet/ginhelmet"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/sessions"
 	// "github.com/gin-contrib/csrf"
 	// "github.com/gin-contrib/sessions"
 	// "github.com/gin-contrib/sessions/cookie"
@@ -110,7 +111,15 @@ func New() *gin.Engine {
 		v3.GET("/long_async", handler.LongAsync(r))
 		v3.GET("/long_sync", handler.LongSync(r))
 		// v3.GET("/ping", middleware.SecurityHeaders(r), handler.V3Ping(r))
-		v3.GET("/ping",middleware.RateLimiter(), handler.V3Ping(r))
+		v3.GET("/ping", middleware.RateLimiter(), handler.V3Ping(r))
+	}
+
+	{
+		v4 := api.Group(utils.V4Prefix)
+		v4.Use(sessions.Sessions("mysession", utils.SessionStore))
+		v4.GET("/login", handler.V4Login(r))
+		v4.GET("/profile", handler.V4Profile(r))
+		v4.GET("/logout", handler.V4Logout(r))
 	}
 
 	return r
